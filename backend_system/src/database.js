@@ -1,7 +1,7 @@
 import { Pool } from "pg";
-const pool = new Pool();
+export const pool = new Pool();
 
-async function initializeDatabase() {
+export const initializeDatabase = async() => {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
       id SERIAL PRIMARY KEY,
@@ -11,4 +11,3 @@ async function initializeDatabase() {
   `);
 }
 
-module.exports = { pool, initializeDatabase };

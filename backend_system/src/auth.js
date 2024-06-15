@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { Pool } from "pg";
 const pool = new Pool();
 
-const SECRET_KEY = "your_jwt_secret_key";
+const SECRET_KEY = "545454874dfjshj#%^%^$%^$%^#987979$&*537458748545476jvkdnfnjeshjhfdsjlmkaldjwekjhrijioeut85764$";
 
 async function registerUser(username, password) {
   const hashedPassword = await bcrypt.hash(password, 10);
