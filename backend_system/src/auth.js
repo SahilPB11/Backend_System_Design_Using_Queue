@@ -1,11 +1,11 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { Pool } from "pg";
-const pool = new Pool();
+import { pool } from "./database.js";
 
-const SECRET_KEY = "545454874dfjshj#%^%^$%^$%^#987979$&*537458748545476jvkdnfnjeshjhfdsjlmkaldjwekjhrijioeut85764$";
+const SECRET_KEY =
+  "545454874dfjshj#%^%^$%^$%^#987979$&*537458748545476jvkdnfnjeshjhfdsjlmkaldjwekjhrijioeut85764$";
 
-async function registerUser(username, password) {
+export const registerUser = async(username, password)=> {
   const hashedPassword = await bcrypt.hash(password, 10);
   await pool.query("INSERT INTO users (username, password) VALUES ($1, $2)", [
     username,
@@ -13,7 +13,7 @@ async function registerUser(username, password) {
   ]);
 }
 
-async function loginUser(username, password) {
+export const loginUser = async(username, password) =>{
   const result = await pool.query("SELECT * FROM users WHERE username = $1", [
     username,
   ]);
@@ -32,4 +32,4 @@ async function loginUser(username, password) {
   throw new Error("Invalid credentials");
 }
 
-module.exports = { registerUser, loginUser };
+

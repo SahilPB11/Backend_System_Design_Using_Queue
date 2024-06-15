@@ -1,5 +1,15 @@
 version: '3.8'
 services:
+  app:
+    build: .
+    ports:
+      - "3001:3001"
+    depends_on:
+      - redis
+      - postgres
+    environment:
+      - DATABASE_URL=postgres://user:password@postgres/mydb
+
   postgres:
     image: postgres:latest
     environment:
@@ -21,7 +31,7 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus.yml:/etc/prometheus/prometheus.yaml
 
   grafana:
     image: grafana/grafana

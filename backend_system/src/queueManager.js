@@ -1,20 +1,25 @@
-import redis from "redis";
-const client = redis.createClient();
+import createRedisClient from "./redisClient.js";
 
 export const enqueueRequest = async (userId, request) => {
-  return new Promise((resolve, reject) => {
-    client.rPush(userId, JSON.stringify(request), (err, res) => {
-      if (err) return reject(err);
-      resolve(res);
-    });
-  });
+  try {
+    const client = await createRedisClient;
+    const result = await client.RPUSH(userId, request)
+    console.log("Request enqueued successfully:", result);
+    return result;
+  } catch (error) {
+    console.error("Error enqueuing request:", error);
+    throw error;
+  }
 };
 
 export const dequeueRequest = async (userId) => {
-  return new Promise((resolve, reject) => {
-    client.lPop(userId, (err, res) => {
-      if (err) return reject(err);
-      resolve(JSON.parse(res));
-    });
-  });
+  try {
+    const client = await createRedisClient;
+    const result = await client.LPOP(userId);
+    console.log("Request dequeued successfully:", result);
+    return result;
+  } catch (error) {
+    console.error("Error dequeuing request:", error);
+    throw error;
+  }
 };

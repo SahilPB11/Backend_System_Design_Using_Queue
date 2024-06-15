@@ -9,7 +9,10 @@ export const processQueue = async (userId) => {
       try {
         // Simulate processing time (replace with actual request processing logic)
         await simulateProcessing(request);
-        console.log(`Request processed successfully for user ${userId}:`, request);
+        console.log(
+          `Request processed successfully for user ${userId}:`,
+          request
+        );
       } catch (error) {
         console.error(`Error processing request for user ${userId}:`, error);
         // Handle error or retry logic if needed
@@ -26,6 +29,6 @@ const simulateProcessing = async (request) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve();
-    }, Math.random() * 5000); // Simulate processing time up to 5 seconds
+    }, 5000); // Simulate processing time up to 5 seconds
   });
 };
