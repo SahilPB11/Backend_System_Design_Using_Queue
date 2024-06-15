@@ -20,20 +20,17 @@ async function connectToRabbitMQ() {
 // Enqueue a task
 export const enqueueRequest = async (userId, request) => {
   const channel = await connectToRabbitMQ();
-
   channel.sendToQueue(
     QUEUE_NAME,
     Buffer.from(JSON.stringify({ userId, request })),
     { persistent: true }
   );
-
   console.log("Request enqueued:", userId, request);
 };
 
 // Dequeue a task
 export const dequeueRequest = async () => {
   const channel = await connectToRabbitMQ();
-
   const message = await channel.get(QUEUE_NAME);
   if (message) {
     const task = JSON.parse(message.content.toString());
@@ -41,6 +38,5 @@ export const dequeueRequest = async () => {
     channel.ack(message);
     return task;
   }
-
   return null;
 };
