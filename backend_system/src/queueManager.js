@@ -3,7 +3,10 @@ import createRedisClient from "./redisClient.js";
 export const enqueueRequest = async (userId, request) => {
   try {
     const client = await createRedisClient;
-    const result = await client.RPUSH(userId, request)
+    client
+      ? console.log("Redis client connected")
+      : console.log("Redis client not connected");
+    const result = await client.RPUSH(userId, request);
     console.log("Request enqueued successfully:", result);
     return result;
   } catch (error) {
