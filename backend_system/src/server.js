@@ -65,8 +65,9 @@ app.get("/metrics", async (req, res) => {
   res.end(await promClient.register.metrics());
 });
 
+// Initialize database
 initializeDatabase().then(() => {
   app.listen(3001, () => {
-    console.log("Server running on port 3000");
+    console.log("Server running on port 3001");
   });
 });

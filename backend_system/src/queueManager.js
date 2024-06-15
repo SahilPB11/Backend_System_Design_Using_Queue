@@ -1,28 +1,46 @@
-import createRedisClient from "./redisClient.js";
+import amqp from "amqplib";
 
-export const enqueueRequest = async (userId, request) => {
+const QUEUE_NAME = "tasks";
+
+// Connect to RabbitMQ server
+async function connectToRabbitMQ() {
   try {
-    const client = await createRedisClient;
-    client
-      ? console.log("Redis client connected")
-      : console.log("Redis client not connected");
-    const result = await client.RPUSH(userId, request);
-    console.log("Request enqueued successfully:", result);
-    return result;
+    const connection = await amqp.connect("amqp://rabbitmq:5672");
+    console.log(connection);
+    const channel = await connection.createChannel();
+    await channel.assertQueue(QUEUE_NAME, { durable: true });
+    console.log("Connected to RabbitMQ");
+    return channel;
   } catch (error) {
-    console.error("Error enqueuing request:", error);
+    console.error("Error connecting to RabbitMQ:", error);
     throw error;
   }
+}
+
+// Enqueue a task
+export const enqueueRequest = async (userId, request) => {
+  const channel = await connectToRabbitMQ();
+
+  channel.sendToQueue(
+    QUEUE_NAME,
+    Buffer.from(JSON.stringify({ userId, request })),
+    { persistent: true }
+  );
+
+  console.log("Request enqueued:", userId, request);
 };
 
-export const dequeueRequest = async (userId) => {
-  try {
-    const client = await createRedisClient;
-    const result = await client.LPOP(userId);
-    console.log("Request dequeued successfully:", result);
-    return result;
-  } catch (error) {
-    console.error("Error dequeuing request:", error);
-    throw error;
+// Dequeue a task
+export const dequeueRequest = async () => {
+  const channel = await connectToRabbitMQ();
+
+  const message = await channel.get(QUEUE_NAME);
+  if (message) {
+    const task = JSON.parse(message.content.toString());
+    console.log("Dequeued task:", task.userId, task.request);
+    channel.ack(message);
+    return task;
   }
+
+  return null;
 };
